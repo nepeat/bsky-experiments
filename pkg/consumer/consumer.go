@@ -173,7 +173,7 @@ func NewConsumer(
 		Store:       store,
 
 		BackfillStatus: xsync.NewMapOf[string, *BackfillRepoStatus](),
-		SyncLimiter:    rate.NewLimiter(2, 1),
+		SyncLimiter:    rate.NewLimiter(5, 1),
 
 		magicHeaderKey: magicHeaderKey,
 		magicHeaderVal: magicHeaderVal,
