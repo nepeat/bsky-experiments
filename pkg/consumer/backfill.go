@@ -163,7 +163,7 @@ func (c *Consumer) ProcessBackfill(ctx context.Context, repoDID string) {
 	}
 
 	req.Header.Set("Accept", "application/vnd.ipld.car")
-	req.Header.Set("User-Agent", "jaz-atproto-backfill/0.0.1")
+	req.Header.Set("User-Agent", "atproto-backfill/owo.me-fork/0.0.1")
 	if c.magicHeaderKey != "" && c.magicHeaderVal != "" {
 		req.Header.Set(c.magicHeaderKey, c.magicHeaderVal)
 	}
