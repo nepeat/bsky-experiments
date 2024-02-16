@@ -12,7 +12,68 @@ Some changes made to this fork are:
 - `consumer` job runs at all times to fetch the firehose
 - `plc` + `backfill-pump` is a combination that has been handy to make `consumer` fetch the entire BSky network.
 
-## Original README
+## Getting Started
+
+For the folks that are brave enough to run this without help, here are my notes that got the code running on my infrastructure. Beware breakages since this is code meant for not your infrastructure nor my infrastructure.
+
+1. At minimum, have a Scylla cluster and Postgres endpoint. I will not describe the process because even I do not know how I set it up.
+
+My setup is 3x virtual machines running on fairly OK metals (192GB RAM, 2x 2TB SSDs in ZFS RAID1, 2x Xeon Gold 6140s). General specs at time of writing is 16GB RAM, 8 cores, 256GB per VM.
+
+Patroni is used for SQL DB failover and Consul is used for service discovery for the active database primary. DB VMs have Scylla and Postgres colocated with each other. This is not a great idea, please do not try this at home.
+
+Once Postgres and Scylla is up, here are the bare minimum environment variables needed to make this run:
+
+```env
+POSTGRES_URL=postgres://bsky:hunter2@primary.16-sea1.service.consul:5433/bsky
+SHARD_DB_NODES=[2001:db8::f01]:19042,[2001:db8::f02]:19042,[2001:db8::f03]:19042
+REDIS_ADDRESS=host.docker.internal:6379
+```
+
+These env vars can be placed in:
+
+- .envrc (useful for debugging on the shell)
+- .env
+- .consumer.env (symlink recomended to .env)
+- .plc.env (symlink recomended to .env)
+
+2. Create the Scylla keyspace. I know 2 replication is weak but given that this is my environmenet, YOLO.
+
+```sh
+cqlsh -e "CREATE KEYSPACE bsky WITH replication = {'class': 'NetworkTopologyStrategy', 'datacenter1': '2'}"
+```
+
+3. Import the Scylla schema.
+
+```sh
+cqlsh -e "SOURCE './db/scylla/schema.cql'"
+```
+
+4. Import DB schemas.
+
+```sh
+psql $POSTGRES_URL < pkg/consumer/store/schema/schema.sql 
+psql $POSTGRES_URL < pkg/consumer/store/schema/sentiment.sql 
+psql $POSTGRES_URL < pkg/consumer/store/schema/repocleanup.sql 
+psql $POSTGRES_URL < pkg/consumer/store/schema/jazbot.sql 
+psql $POSTGRES_URL < pkg/consumer/store/schema/auth.sql 
+```
+
+5. Start Redis.
+
+**NOTE**: Redis will be listening on all IPs, you the reader should firewall off Redis.
+
+```sh
+make redis-up
+```
+
+6. Start firehose consumer.
+
+```sh
+make consumer-up
+```
+
+# Original README
 
 This repo has contains some fun Go experiments interacting with BlueSky via the AT Protocol.
 
