@@ -14,3 +14,8 @@ services:
       - ../../.plc.env
     ports:
       - "8097:8080"
+    logging:
+      driver: loki
+      options:
+        loki-url: "http://loki.fmt2.generalprogramming.org/loki/api/v1/push"
+    network_mode: bridge
