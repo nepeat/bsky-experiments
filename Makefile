@@ -172,3 +172,8 @@ graphd-down: # Stops graphd docker container
 run-dev-graphd: .env ## Runs graphd for local dev
 	@echo "Running Graphd..."
 	go run ./cmd/graphd
+
+.PHONY: vmagent-up
+vmagent-up: ## Starts vmagent
+	@echo "Starting vmagent..."
+	docker compose -f vmagent/docker-compose.yml up -d

@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  vmagent:
+    image: victoriametrics/vmagent
+    restart: always
+    network_mode: host
+    command: "-promscrape.config=/scrape.yaml -remoteWrite.url=http://vminsert.fmt2.generalprogramming.org:8480/insert/0/prometheus/api/v1/write"
+    volumes:
+      - "./scrape.yaml:/scrape.yaml"
