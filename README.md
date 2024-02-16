@@ -2,15 +2,14 @@
 
 This is a fork of the upstream bsky-experiments to make this run on my group infrastructure. I have no idea what I am doing but I'm hoping to do my own data science using the upstream as a starting point and running on my infrastructure for hammering convienence.
 
-Some changes made to this fork are:
+## Personal Changes
 
-- `vmagent/` - VictoriaMetrics scraping job for my dev box to push metrics to my VM cluster.
-- bridge mode is used instead of compose specific networks out of sheer lazyness and the oddities of running Docker networks that are primarily IPv6.
-
-## Personal Notes
+Some changes made to this fork for my personal consumption are as follows:
 
 - `consumer` job runs at all times to fetch the firehose
 - `plc` + `backfill-pump` is a combination that has been handy to make `consumer` fetch the entire BSky network.
+- `vmagent/` - VictoriaMetrics scraping job for my dev box to push metrics to my VM cluster.
+- bridge mode is used instead of compose specific networks out of sheer lazyness and the oddities of running Docker networks that are primarily IPv6.
 
 ## Getting Started
 
