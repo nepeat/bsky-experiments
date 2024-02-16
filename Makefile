@@ -101,6 +101,11 @@ plc-up:
 	@echo "Starting PLC..."
 	docker compose -f build/plc/docker-compose.yml up --build -d
 
+.PHONY: plc-down
+plc-down:
+	@echo "Stopping PLC..."
+	docker compose -f build/plc/docker-compose.yml down
+
 # Start up the Redis Store
 .PHONY: redis-up
 redis-up:
@@ -177,3 +182,8 @@ run-dev-graphd: .env ## Runs graphd for local dev
 vmagent-up: ## Starts vmagent
 	@echo "Starting vmagent..."
 	docker compose -f vmagent/docker-compose.yml up -d
+
+.PHONY: vmagent-restart
+vmagent-restart: ## Restarts vmagent
+	@echo "Restarting vmagent..."
+	docker compose -f vmagent/docker-compose.yml restart
