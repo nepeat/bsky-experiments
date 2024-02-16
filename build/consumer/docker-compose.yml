@@ -6,7 +6,7 @@ services:
       dockerfile: build/consumer/Dockerfile
     extra_hosts:
       - "host.docker.internal:host-gateway"
-    # restart: always
+    restart: always
     image: atproto-consumer
     container_name: atproto-consumer
     env_file:
