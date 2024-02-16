@@ -1,5 +1,19 @@
 # BSky Experiments
 
+This is a fork of the upstream bsky-experiments to make this run on my group infrastructure. I have no idea what I am doing but I'm hoping to do my own data science using the upstream as a starting point and running on my infrastructure for hammering convienence.
+
+Some changes made to this fork are:
+
+- `vmagent/` - VictoriaMetrics scraping job for my dev box to push metrics to my VM cluster.
+- bridge mode is used instead of compose specific networks out of sheer lazyness and the oddities of running Docker networks that are primarily IPv6.
+
+## Personal Notes
+
+- `consumer` job runs at all times to fetch the firehose
+- `plc` + `backfill-pump` is a combination that has been handy to make `consumer` fetch the entire BSky network.
+
+## Original README
+
 This repo has contains some fun Go experiments interacting with BlueSky via the AT Protocol.
 
 The Makefile contains some useful targets for building and running the experiments.
