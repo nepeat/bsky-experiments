@@ -55,6 +55,12 @@ func main() {
 			EnvVars: []string{"MAX_QUEUE_SIZE"},
 		},
 		&cli.IntFlag{
+			Name:    "max-qps",
+			Usage:   "max sync events per second",
+			Value:   2,
+			EnvVars: []string{"MAX_QPS"},
+		},
+		&cli.IntFlag{
 			Name:    "port",
 			Usage:   "port to serve metrics on",
 			Value:   8080,
@@ -197,6 +203,7 @@ func Consumer(cctx *cli.Context) error {
 		cctx.String("redis-prefix"),
 		store,
 		u.String(),
+		cctx.Int("max-qps"),
 		cctx.String("magic-header-key"),
 		cctx.String("magic-header-val"),
 		cctx.String("graphd-root"),

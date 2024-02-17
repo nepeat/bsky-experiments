@@ -139,6 +139,7 @@ func NewConsumer(
 	redisPrefix string,
 	store *store.Store,
 	socketURL string,
+	limiterQPS int,
 	magicHeaderKey string,
 	magicHeaderVal string,
 	graphdRoot string,
@@ -173,7 +174,7 @@ func NewConsumer(
 		Store:       store,
 
 		BackfillStatus: xsync.NewMapOf[string, *BackfillRepoStatus](),
-		SyncLimiter:    rate.NewLimiter(5, 1),
+		SyncLimiter:    rate.NewLimiter(rate.Limit(limiterQPS), 1),
 
 		magicHeaderKey: magicHeaderKey,
 		magicHeaderVal: magicHeaderVal,
