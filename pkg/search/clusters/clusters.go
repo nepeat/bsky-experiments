@@ -2,11 +2,12 @@ package clusters
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/bytedance/sonic"
 )
 
 type Cluster struct {
@@ -72,7 +73,7 @@ func NewClusterManager(graphJSONUrl string) (*ClusterManager, error) {
 	}
 
 	var graphData GraphData
-	err = json.Unmarshal(body, &graphData)
+	err = sonic.Unmarshal(body, &graphData)
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal graph data: %w", err)
 	}

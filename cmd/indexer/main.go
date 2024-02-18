@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -14,6 +13,8 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/bytedance/sonic"
+	sonicDecoder "github.com/bytedance/sonic/decoder"
 	"github.com/ericvolp12/bsky-experiments/pkg/consumer/store"
 	"github.com/ericvolp12/bsky-experiments/pkg/consumer/store/store_queries"
 	objectdetection "github.com/ericvolp12/bsky-experiments/pkg/object-detection"
@@ -639,7 +640,7 @@ func (index *Index) IndexActorProfilePictures(ctx context.Context, pageSize int3
 
 			// Read the response body into a mirrorResponse
 			profileResponse := ProfileRecords{}
-			err = json.NewDecoder(resp.Body).Decode(&profileResponse)
+			err = sonicDecoder.NewStreamDecoder(resp.Body).Decode(&profileResponse)
 			if err != nil {
 				log.Error("failed to decode response body for actor: %+v", err)
 				return
@@ -887,7 +888,7 @@ func (index *Index) IndexImages(ctx context.Context, pageSize int32) {
 				successCount.Inc()
 			}
 
-			cvClasses, err := json.Marshal(result.Results)
+			cvClasses, err := sonic.Marshal(result.Results)
 			if err != nil {
 				log.Errorf("Failed to marshal classes: %v", err)
 				return

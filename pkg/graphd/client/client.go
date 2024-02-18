@@ -3,9 +3,11 @@ package client
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
+
+	sonicDecoder "github.com/bytedance/sonic/decoder"
+	sonicEncoder "github.com/bytedance/sonic/encoder"
 
 	"go.opentelemetry.io/otel"
 )
@@ -39,7 +41,7 @@ func (c *Client) Follow(ctx context.Context, actorDid string, targetDid string) 
 	}
 
 	body := new(bytes.Buffer)
-	err := json.NewEncoder(body).Encode(follow)
+	err := sonicEncoder.NewStreamEncoder(body).Encode(follow)
 	if err != nil {
 		return fmt.Errorf("failed to encode follow: %w", err)
 	}
@@ -85,7 +87,7 @@ func (c *Client) Unfollow(ctx context.Context, actorDid string, targetDid string
 	}
 
 	body := new(bytes.Buffer)
-	err := json.NewEncoder(body).Encode(unfollow)
+	err := sonicEncoder.NewStreamEncoder(body).Encode(unfollow)
 	if err != nil {
 		return fmt.Errorf("failed to encode unfollow: %w", err)
 	}
@@ -144,7 +146,7 @@ func (c *Client) GetFollowers(ctx context.Context, did string) ([]string, error)
 	}
 
 	var followerDIDs []string
-	err = json.NewDecoder(resp.Body).Decode(&followerDIDs)
+	err = sonicDecoder.NewStreamDecoder(resp.Body).Decode(&followerDIDs)
 	if err != nil {
 		return nil, err
 	}
@@ -180,7 +182,7 @@ func (c *Client) GetFollowersNotFollowing(ctx context.Context, did string) ([]st
 	}
 
 	var followerDIDs []string
-	err = json.NewDecoder(resp.Body).Decode(&followerDIDs)
+	err = sonicDecoder.NewStreamDecoder(resp.Body).Decode(&followerDIDs)
 	if err != nil {
 		return nil, err
 	}

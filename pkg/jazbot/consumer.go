@@ -11,7 +11,7 @@ import (
 	comatproto "github.com/bluesky-social/indigo/api/atproto"
 	"github.com/bluesky-social/indigo/api/bsky"
 	lexutil "github.com/bluesky-social/indigo/lex/util"
-	"github.com/goccy/go-json"
+	"github.com/bytedance/sonic"
 	"github.com/redis/go-redis/v9"
 	typegen "github.com/whyrusleeping/cbor-gen"
 
@@ -51,7 +51,7 @@ func (c *Consumer) WriteCursor(ctx context.Context) error {
 
 	// Marshal the cursor JSON
 	c.ProgMux.Lock()
-	data, err := json.Marshal(c.Progress)
+	data, err := sonic.Marshal(c.Progress)
 	c.ProgMux.Unlock()
 	if err != nil {
 		return fmt.Errorf("failed to marshal cursor JSON: %+v", err)
@@ -79,7 +79,7 @@ func (c *Consumer) ReadCursor(ctx context.Context) error {
 
 	// Unmarshal the cursor JSON
 	c.ProgMux.Lock()
-	err = json.Unmarshal(data, c.Progress)
+	err = sonic.Unmarshal(data, c.Progress)
 	c.ProgMux.Unlock()
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal cursor JSON: %+v", err)

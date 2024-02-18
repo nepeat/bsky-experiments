@@ -2,13 +2,13 @@ package events
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/bluesky-social/indigo/api/bsky"
+	sonicDecoder "github.com/bytedance/sonic/decoder"
 	intXRPC "github.com/ericvolp12/bsky-experiments/pkg/xrpc"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel/attribute"
@@ -75,7 +75,7 @@ func (bsky *BSky) getHandleFromDirectory(ctx context.Context, did string) (handl
 
 	// Read the response body into a didLookup
 	didLookup := didLookup{}
-	err = json.NewDecoder(resp.Body).Decode(&didLookup)
+	err = sonicDecoder.NewStreamDecoder(resp.Body).Decode(&didLookup)
 	if err != nil {
 		span.SetAttributes(attribute.String("response.decode.error", err.Error()))
 		return handle, fmt.Errorf("error decoding response body for %s: %w", did, err)
@@ -122,7 +122,7 @@ func (bsky *BSky) getHandleFromPLCMirror(ctx context.Context, did string) (handl
 
 	// Read the response body into a mirrorResponse
 	mirrorResponse := plcMirrorResponse{}
-	err = json.NewDecoder(resp.Body).Decode(&mirrorResponse)
+	err = sonicDecoder.NewStreamDecoder(resp.Body).Decode(&mirrorResponse)
 	if err != nil {
 		span.SetAttributes(attribute.String("response.decode.error", err.Error()))
 		return handle, fmt.Errorf("error decoding response body for %s: %w", did, err)

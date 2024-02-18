@@ -3,11 +3,11 @@ package search
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"log"
 	"time"
 
+	"github.com/bytedance/sonic"
 	_ "github.com/lib/pq" // postgres driver
 
 	"github.com/ericvolp12/bsky-experiments/pkg/search/search_queries"
@@ -648,14 +648,14 @@ func postFromQueryPost(p search_queries.GetPostRow) (*Post, error) {
 	case []byte:
 		// Try to unmarshal if it's a slice of bytes
 		var imagesData []map[string]interface{}
-		if err := json.Unmarshal(v, &imagesData); err != nil {
+		if err := sonic.Unmarshal(v, &imagesData); err != nil {
 			return nil, fmt.Errorf("failed to unmarshal images: %v", err)
 		}
 		// If unmarshaling is successful, loop through the data and convert each item to an Image
 		for _, data := range imagesData {
-			imageData, _ := json.Marshal(data)
+			imageData, _ := sonic.Marshal(data)
 			var image Image
-			if err := json.Unmarshal(imageData, &image); err != nil {
+			if err := sonic.Unmarshal(imageData, &image); err != nil {
 				log.Printf("failed to convert data to image: %v", err)
 				continue
 			}
@@ -717,7 +717,7 @@ func postFromPagePost(p search_queries.GetPostPageRow) (*Post, error) {
 	switch v := p.Labels.(type) {
 	case []byte:
 		// Convert labels from an array of strings to a slice of strings
-		if err := json.Unmarshal(v, &labels); err != nil {
+		if err := sonic.Unmarshal(v, &labels); err != nil {
 			return nil, fmt.Errorf("failed to unmarshal labels: %v", err)
 		}
 	default:
@@ -775,7 +775,7 @@ func postFromCursorPagePost(p search_queries.GetPostPageCursorRow) (*Post, error
 	switch v := p.Labels.(type) {
 	case []byte:
 		// Convert labels from an array of strings to a slice of strings
-		if err := json.Unmarshal(v, &labels); err != nil {
+		if err := sonic.Unmarshal(v, &labels); err != nil {
 			return nil, fmt.Errorf("failed to unmarshal labels: %v", err)
 		}
 	default:
@@ -881,14 +881,14 @@ func postWithAuthorHandleFromQueryPost(p search_queries.GetPostWithAuthorHandleR
 	case []byte:
 		// Try to unmarshal if it's a slice of bytes
 		var imagesData []map[string]interface{}
-		if err := json.Unmarshal(v, &imagesData); err != nil {
+		if err := sonic.Unmarshal(v, &imagesData); err != nil {
 			return nil, fmt.Errorf("failed to unmarshal images: %v", err)
 		}
 		// If unmarshaling is successful, loop through the data and convert each item to an Image
 		for _, data := range imagesData {
-			imageData, _ := json.Marshal(data)
+			imageData, _ := sonic.Marshal(data)
 			var image Image
-			if err := json.Unmarshal(imageData, &image); err != nil {
+			if err := sonic.Unmarshal(imageData, &image); err != nil {
 				log.Printf("failed to convert data to image: %v", err)
 				continue
 			}

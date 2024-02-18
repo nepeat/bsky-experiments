@@ -1,7 +1,6 @@
 package endpoints
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,6 +11,7 @@ import (
 	"github.com/bluesky-social/indigo/api/bsky"
 	"github.com/bluesky-social/indigo/atproto/syntax"
 	"github.com/bluesky-social/indigo/repo"
+	"github.com/bytedance/sonic"
 	"github.com/gin-gonic/gin"
 	"github.com/ipfs/go-cid"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
@@ -103,7 +103,7 @@ func (api *API) GetRepoAsJSON(c *gin.Context) {
 				return nil
 			}
 			rec.CreatedAt = recCreatedAt.Format(time.RFC3339)
-			recBytes, err := json.Marshal(rec)
+			recBytes, err := sonic.Marshal(rec)
 			if err != nil {
 				log.Printf("Error marshaling record: %v", err)
 				return nil
@@ -117,7 +117,7 @@ func (api *API) GetRepoAsJSON(c *gin.Context) {
 				return nil
 			}
 			rec.CreatedAt = recCreatedAt.Format(time.RFC3339)
-			recBytes, err := json.Marshal(rec)
+			recBytes, err := sonic.Marshal(rec)
 			if err != nil {
 				log.Printf("Error marshaling record: %v", err)
 				return nil
@@ -131,7 +131,7 @@ func (api *API) GetRepoAsJSON(c *gin.Context) {
 				return nil
 			}
 			rec.CreatedAt = recCreatedAt.Format(time.RFC3339)
-			recBytes, err := json.Marshal(rec)
+			recBytes, err := sonic.Marshal(rec)
 			if err != nil {
 				log.Printf("Error marshaling record: %v", err)
 				return nil
@@ -145,7 +145,7 @@ func (api *API) GetRepoAsJSON(c *gin.Context) {
 				return nil
 			}
 			rec.CreatedAt = recCreatedAt.Format(time.RFC3339)
-			recBytes, err := json.Marshal(rec)
+			recBytes, err := sonic.Marshal(rec)
 			if err != nil {
 				log.Printf("Error marshaling record: %v", err)
 				return nil
@@ -159,7 +159,7 @@ func (api *API) GetRepoAsJSON(c *gin.Context) {
 				return nil
 			}
 			rec.CreatedAt = recCreatedAt.Format(time.RFC3339)
-			recBytes, err := json.Marshal(rec)
+			recBytes, err := sonic.Marshal(rec)
 			if err != nil {
 				log.Printf("Error marshaling record: %v", err)
 				return nil
@@ -167,7 +167,7 @@ func (api *API) GetRepoAsJSON(c *gin.Context) {
 			entity := fmt.Sprintf(`{"uri":"at://%s/%s","content":%s}`, repoDID, path, string(recBytes))
 			blocks = append(blocks, string(entity))
 		case *bsky.ActorProfile:
-			recBytes, err := json.Marshal(rec)
+			recBytes, err := sonic.Marshal(rec)
 			if err != nil {
 				log.Printf("Error marshaling record: %v", err)
 				return nil

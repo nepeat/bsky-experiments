@@ -2,10 +2,10 @@ package jazbot
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 
+	sonicDecoder "github.com/bytedance/sonic/decoder"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -36,7 +36,7 @@ func GetHandleFromPLCMirror(ctx context.Context, mirror, did string) (handle str
 
 	// Read the response body into a mirrorResponse
 	mirrorResponse := plcMirrorResponse{}
-	err = json.NewDecoder(resp.Body).Decode(&mirrorResponse)
+	err = sonicDecoder.NewStreamDecoder(resp.Body).Decode(&mirrorResponse)
 	if err != nil {
 		span.SetAttributes(attribute.String("response.decode.error", err.Error()))
 		return handle, fmt.Errorf("error decoding response body for %s: %w", did, err)
@@ -71,7 +71,7 @@ func GetDIDFromPLCMirror(ctx context.Context, mirror, handle string) (did string
 
 	// Read the response body into a mirrorResponse
 	mirrorResponse := plcMirrorResponse{}
-	err = json.NewDecoder(resp.Body).Decode(&mirrorResponse)
+	err = sonicDecoder.NewStreamDecoder(resp.Body).Decode(&mirrorResponse)
 	if err != nil {
 		span.SetAttributes(attribute.String("response.decode.error", err.Error()))
 		return did, fmt.Errorf("error decoding response body for %s: %w", handle, err)

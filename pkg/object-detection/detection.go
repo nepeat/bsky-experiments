@@ -3,11 +3,13 @@ package objectdetection
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
 
+	sonicDecoder "github.com/bytedance/sonic/decoder"
+
+	"github.com/bytedance/sonic"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 )
@@ -58,7 +60,7 @@ func (o *ObjectDetectionImpl) ProcessImages(ctx context.Context, imageMetas []*I
 	url := fmt.Sprintf("%s/detect_objects", o.ObjectDetectionServiceHost)
 
 	reqBody := imageMetas
-	jsonReqBody, err := json.Marshal(reqBody)
+	jsonReqBody, err := sonic.Marshal(reqBody)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal object-detection request body: %w", err)
 	}
@@ -80,7 +82,7 @@ func (o *ObjectDetectionImpl) ProcessImages(ctx context.Context, imageMetas []*I
 	}
 
 	var imageResults []*ImageResult
-	if err := json.NewDecoder(resp.Body).Decode(&imageResults); err != nil {
+	if err := sonicDecoder.NewStreamDecoder(resp.Body).Decode(&imageResults); err != nil {
 		return nil, fmt.Errorf("failed to decode object-detection response body: %w", err)
 	}
 

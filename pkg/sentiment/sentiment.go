@@ -3,11 +3,12 @@ package sentiment
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
 
+	"github.com/bytedance/sonic"
+	sonicDecoder "github.com/bytedance/sonic/decoder"
 	"github.com/pemistahl/lingua-go"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -98,7 +99,7 @@ func (s *Sentiment) GetPostsSentiment(ctx context.Context, posts []*SentimentPos
 	url := fmt.Sprintf("%s/analyze_sentiment", s.SentimentServiceHost)
 
 	reqBody := sentimentRequest{Posts: englishPosts}
-	jsonReqBody, err := json.Marshal(reqBody)
+	jsonReqBody, err := sonic.Marshal(reqBody)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal sentiment request body: %w", err)
 	}
@@ -116,7 +117,7 @@ func (s *Sentiment) GetPostsSentiment(ctx context.Context, posts []*SentimentPos
 	defer resp.Body.Close()
 
 	var respBody sentimentResponse
-	if err := json.NewDecoder(resp.Body).Decode(&respBody); err != nil {
+	if err := sonicDecoder.NewStreamDecoder(resp.Body).Decode(&respBody); err != nil {
 		return nil, fmt.Errorf("failed to decode sentiment response body: %w", err)
 	}
 

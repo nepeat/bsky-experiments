@@ -2,13 +2,13 @@ package auth
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
 
+	"github.com/bytedance/sonic"
 	es256k "github.com/ericvolp12/jwt-go-secp256k1"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
@@ -244,7 +244,7 @@ func (auth *Auth) GetPLCEntry(ctx context.Context, did string) (*PLCEntry, error
 
 	// Unmarshal into a PLC Entry
 	plcEntry := &PLCEntry{}
-	err = json.Unmarshal(body, plcEntry)
+	err = sonic.Unmarshal(body, plcEntry)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to unmarshal PLC Entry: %v", err)
 	}

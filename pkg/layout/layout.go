@@ -3,12 +3,12 @@ package layout
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 
+	"github.com/bytedance/sonic"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
@@ -48,7 +48,7 @@ func SendEdgeListRequest(ctx context.Context, serviceURL string, edges []Edge) (
 	span.SetAttributes(attribute.Int("edges.count", len(edges)))
 	span.SetAttributes(attribute.Int("iterations.count", request.Iterations))
 
-	requestJSON, err := json.Marshal(request)
+	requestJSON, err := sonic.Marshal(request)
 	if err != nil {
 		return nil, fmt.Errorf("error marshalling request: %w", err)
 	}
@@ -78,7 +78,7 @@ func SendEdgeListRequest(ctx context.Context, serviceURL string, edges []Edge) (
 	}
 
 	var responsePoints ResponsePoints
-	err = json.Unmarshal(body, &responsePoints)
+	err = sonic.Unmarshal(body, &responsePoints)
 	if err != nil {
 		return nil, fmt.Errorf("error unmarshalling response points: %w", err)
 	}

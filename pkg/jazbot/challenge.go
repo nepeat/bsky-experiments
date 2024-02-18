@@ -10,9 +10,9 @@ import (
 	comatproto "github.com/bluesky-social/indigo/api/atproto"
 	appbsky "github.com/bluesky-social/indigo/api/bsky"
 	lexutil "github.com/bluesky-social/indigo/lex/util"
+	"github.com/bytedance/sonic"
 	"github.com/ericvolp12/bsky-experiments/pkg/consumer"
 	"github.com/ericvolp12/bsky-experiments/pkg/consumer/store/store_queries"
-	"github.com/goccy/go-json"
 	"github.com/sqlc-dev/pqtype"
 	"go.uber.org/zap"
 )
@@ -368,7 +368,7 @@ func (j *Jazbot) ConcludeChallenge(ctx context.Context, event *store_queries.Eve
 		TargetLikes:    targetLikes,
 	}
 
-	resultsBytes, err := json.Marshal(results)
+	resultsBytes, err := sonic.Marshal(results)
 	if err != nil {
 		return fmt.Errorf("failed to marshal results: %+v", err)
 	}

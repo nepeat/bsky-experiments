@@ -3,10 +3,10 @@ package search
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"time"
 
+	"github.com/bytedance/sonic"
 	_ "github.com/lib/pq" // postgres driver
 
 	"github.com/ericvolp12/bsky-experiments/pkg/search/search_queries"
@@ -52,7 +52,7 @@ func (pr *PostRegistry) AddOneLabelPerPost(ctx context.Context, labels []string,
 		}
 	}
 
-	b, err := json.Marshal(labelMap)
+	b, err := sonic.Marshal(labelMap)
 	if err != nil {
 		return fmt.Errorf("error marshalling labels: %w", err)
 	}

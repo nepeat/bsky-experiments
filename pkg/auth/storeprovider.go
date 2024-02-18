@@ -3,10 +3,10 @@ package auth
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"fmt"
 
+	"github.com/bytedance/sonic"
 	"github.com/ericvolp12/bsky-experiments/pkg/consumer/store"
 	"github.com/ericvolp12/bsky-experiments/pkg/consumer/store/store_queries"
 )
@@ -22,7 +22,7 @@ func NewStoreProvider(s *store.Store) *StoreProvider {
 }
 
 func (p *StoreProvider) UpdateAPIKeyFeedMapping(ctx context.Context, apiKey string, feedAuthEntity *FeedAuthEntity) error {
-	authBytes, err := json.Marshal(feedAuthEntity)
+	authBytes, err := sonic.Marshal(feedAuthEntity)
 	if err != nil {
 		return fmt.Errorf("failed to marshal feedAuthEntity: %w", err)
 	}
@@ -49,7 +49,7 @@ func (p *StoreProvider) GetEntityFromAPIKey(ctx context.Context, apiKey string) 
 	}
 
 	var authEntity FeedAuthEntity
-	err = json.Unmarshal(key.AuthEntity, &authEntity)
+	err = sonic.Unmarshal(key.AuthEntity, &authEntity)
 	if err != nil {
 		return nil, fmt.Errorf("failed to unmarshal auth entity: %w", err)
 	}

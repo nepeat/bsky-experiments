@@ -15,11 +15,11 @@ import (
 	comatproto "github.com/bluesky-social/indigo/api/atproto"
 	"github.com/bluesky-social/indigo/api/bsky"
 	lexutil "github.com/bluesky-social/indigo/lex/util"
+	"github.com/bytedance/sonic"
 	"github.com/ericvolp12/bsky-experiments/pkg/consumer/store"
 	"github.com/ericvolp12/bsky-experiments/pkg/consumer/store/store_queries"
 	graphdclient "github.com/ericvolp12/bsky-experiments/pkg/graphd/client"
 	"github.com/ericvolp12/bsky-experiments/pkg/sharddb"
-	"github.com/goccy/go-json"
 	"github.com/google/uuid"
 	"github.com/ipfs/go-cid"
 	"github.com/labstack/gommon/log"
@@ -97,7 +97,7 @@ func (c *Consumer) WriteCursor(ctx context.Context) error {
 		LastSeq:            seq,
 		LastSeqProcessedAt: processedAt,
 	}
-	data, err := json.Marshal(&p)
+	data, err := sonic.Marshal(&p)
 	if err != nil {
 		return fmt.Errorf("failed to marshal cursor JSON: %+v", err)
 	}
@@ -123,7 +123,7 @@ func (c *Consumer) ReadCursor(ctx context.Context) error {
 	}
 
 	// Unmarshal the cursor JSON
-	err = json.Unmarshal(data, c.Progress)
+	err = sonic.Unmarshal(data, c.Progress)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal cursor JSON: %+v", err)
 	}
@@ -936,7 +936,7 @@ func (c *Consumer) HandleCreateRecord(
 
 		if rec.Facets != nil {
 			facetsJSON := []byte{}
-			facetsJSON, err = json.Marshal(rec.Facets)
+			facetsJSON, err = sonic.Marshal(rec.Facets)
 			if err != nil {
 				log.Errorf("failed to marshal facets: %+v", err)
 			} else if len(facetsJSON) > 0 {
@@ -946,7 +946,7 @@ func (c *Consumer) HandleCreateRecord(
 
 		if rec.Embed != nil && rec.Embed.EmbedExternal != nil {
 			embedJSON := []byte{}
-			embedJSON, err = json.Marshal(rec.Embed.EmbedExternal)
+			embedJSON, err = sonic.Marshal(rec.Embed.EmbedExternal)
 			if err != nil {
 				log.Errorf("failed to marshal embed external: %+v", err)
 			} else if len(embedJSON) > 0 {
@@ -1054,7 +1054,7 @@ func (c *Consumer) HandleCreateRecord(
 				break
 			}
 
-			recBytes, err := json.Marshal(rec)
+			recBytes, err := sonic.Marshal(rec)
 			if err != nil {
 				log.Errorf("failed to marshal record for insertion to sharddb: %+v", err)
 				break

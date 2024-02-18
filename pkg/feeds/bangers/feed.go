@@ -7,9 +7,8 @@ import (
 	"strconv"
 	"time"
 
-	"encoding/json"
-
 	appbsky "github.com/bluesky-social/indigo/api/bsky"
+	"github.com/bytedance/sonic"
 	"github.com/ericvolp12/bsky-experiments/pkg/consumer/store"
 	"github.com/ericvolp12/bsky-experiments/pkg/consumer/store/store_queries"
 	"github.com/ericvolp12/bsky-experiments/pkg/search"
@@ -83,7 +82,7 @@ func (f *BangersFeed) fetchAndCachePosts(ctx context.Context, userDID string, fe
 			ActorDid: post.ActorDid,
 			Rkey:     post.Rkey,
 		}
-		cacheValue, err := json.Marshal(postRef)
+		cacheValue, err := sonic.Marshal(postRef)
 		if err != nil {
 			return nil, fmt.Errorf("error marshalling post: %w", err)
 		}
@@ -147,7 +146,7 @@ func (f *BangersFeed) GetPage(ctx context.Context, feed string, userDID string, 
 	} else if err == nil {
 		posts = make([]postRef, len(cached))
 		for i, cachedValue := range cached {
-			json.Unmarshal([]byte(cachedValue), &posts[i])
+			sonic.UnmarshalString(cachedValue, &posts[i])
 		}
 	} else {
 		return nil, nil, fmt.Errorf("error getting posts from cache for feed (%s): %w", feed, err)

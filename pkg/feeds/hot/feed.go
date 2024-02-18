@@ -3,7 +3,6 @@ package hot
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"fmt"
 	"log/slog"
 	"slices"
@@ -12,6 +11,7 @@ import (
 	"time"
 
 	appbsky "github.com/bluesky-social/indigo/api/bsky"
+	"github.com/bytedance/sonic"
 	"github.com/ericvolp12/bsky-experiments/pkg/consumer/store"
 	"github.com/ericvolp12/bsky-experiments/pkg/consumer/store/store_queries"
 	"github.com/redis/go-redis/v9"
@@ -102,7 +102,7 @@ func (f *HotFeed) fetchAndCachePosts(ctx context.Context) ([]postRef, error) {
 			Langs:    post.Langs,
 			HasMedia: post.HasEmbeddedMedia,
 		}
-		cacheValue, err := json.Marshal(postRef)
+		cacheValue, err := sonic.Marshal(postRef)
 		if err != nil {
 			return nil, fmt.Errorf("error marshalling post: %w", err)
 		}
@@ -150,7 +150,7 @@ func (f *HotFeed) GetPage(ctx context.Context, feed string, userDID string, limi
 
 	posts := make([]postRef, len(cached))
 	for i, cachedValue := range cached {
-		json.Unmarshal([]byte(cachedValue), &posts[i])
+		sonic.UnmarshalString(cachedValue, &posts[i])
 	}
 
 	postsSeen := int64(len(posts))

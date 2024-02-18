@@ -12,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/bytedance/sonic"
 	"github.com/ericvolp12/bsky-experiments/pkg/consumer/store"
 	"github.com/ericvolp12/bsky-experiments/pkg/consumer/store/store_queries"
 	"github.com/prometheus/client_golang/prometheus"
@@ -160,7 +161,7 @@ func (d *Directory) fetchDirectoryEntries(ctx context.Context) {
 			var entry DirectoryJSONLRow
 
 			// Try to unmarshal the line into a DirectoryJSONLRow
-			if err := json.Unmarshal([]byte(line), &entry); err != nil {
+			if err := sonic.UnmarshalString(line, &entry); err != nil {
 				d.Logger.Errorf("failed to unmarshal directory entry: %+v", err)
 				resp.Body.Close()
 				return

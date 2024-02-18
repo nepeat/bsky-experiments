@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,6 +11,7 @@ import (
 	"github.com/araddon/dateparse"
 	"github.com/bluesky-social/indigo/api/bsky"
 	"github.com/bluesky-social/indigo/repo"
+	"github.com/bytedance/sonic"
 	"github.com/ipfs/go-cid"
 )
 
@@ -93,7 +93,7 @@ func main() {
 				return nil
 			}
 			rec.CreatedAt = recCreatedAt.Format(time.RFC3339)
-			recBytes, err := json.Marshal(rec)
+			recBytes, err := sonic.Marshal(rec)
 			if err != nil {
 				log.Printf("Error marshaling record: %v", err)
 				return nil
@@ -106,7 +106,7 @@ func main() {
 				return nil
 			}
 			rec.CreatedAt = recCreatedAt.Format(time.RFC3339)
-			recBytes, err := json.Marshal(rec)
+			recBytes, err := sonic.Marshal(rec)
 			if err != nil {
 				log.Printf("Error marshaling record: %v", err)
 				return nil
@@ -119,7 +119,7 @@ func main() {
 				return nil
 			}
 			rec.CreatedAt = recCreatedAt.Format(time.RFC3339)
-			recBytes, err := json.Marshal(rec)
+			recBytes, err := sonic.Marshal(rec)
 			if err != nil {
 				log.Printf("Error marshaling record: %v", err)
 				return nil
@@ -132,7 +132,7 @@ func main() {
 				return nil
 			}
 			rec.CreatedAt = recCreatedAt.Format(time.RFC3339)
-			recBytes, err := json.Marshal(rec)
+			recBytes, err := sonic.Marshal(rec)
 			if err != nil {
 				log.Printf("Error marshaling record: %v", err)
 				return nil
@@ -145,14 +145,14 @@ func main() {
 				return nil
 			}
 			rec.CreatedAt = recCreatedAt.Format(time.RFC3339)
-			recBytes, err := json.Marshal(rec)
+			recBytes, err := sonic.Marshal(rec)
 			if err != nil {
 				log.Printf("Error marshaling record: %v", err)
 				return nil
 			}
 			blocks = append(blocks, string(recBytes))
 		case *bsky.ActorProfile:
-			recBytes, err := json.Marshal(rec)
+			recBytes, err := sonic.Marshal(rec)
 			if err != nil {
 				log.Printf("Error marshaling record: %v", err)
 				return nil

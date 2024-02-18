@@ -3,12 +3,12 @@ package layout
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 
+	"github.com/bytedance/sonic"
 	"github.com/ericvolp12/bsky-experiments/pkg/search"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
@@ -27,7 +27,7 @@ func SendEdgeListRequestTS(ctx context.Context, serviceURL string, postViews []s
 	ctx, span := tracer.Start(ctx, "SendEdgeListRequestTS")
 	defer span.End()
 
-	requestJSON, err := json.Marshal(postViews)
+	requestJSON, err := sonic.Marshal(postViews)
 	if err != nil {
 		return nil, fmt.Errorf("error marshalling request: %w", err)
 	}
@@ -57,7 +57,7 @@ func SendEdgeListRequestTS(ctx context.Context, serviceURL string, postViews []s
 	}
 
 	var responseViews []ThreadViewLayout
-	err = json.Unmarshal(body, &responseViews)
+	err = sonic.Unmarshal(body, &responseViews)
 	if err != nil {
 		return nil, fmt.Errorf("error unmarshalling response views: %w", err)
 	}
