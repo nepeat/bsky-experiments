@@ -13,8 +13,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 	lru "github.com/hashicorp/golang-lru/arc/v2"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promauto"
 	godid "github.com/whyrusleeping/go-did"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
@@ -41,20 +39,20 @@ type KeyCacheEntry struct {
 }
 
 // Initialize Prometheus Metrics for cache hits and misses
-var cacheHits = promauto.NewCounterVec(prometheus.CounterOpts{
-	Name: "bsky_cache_hits_total",
-	Help: "The total number of cache hits",
-}, []string{"cache_type"})
+// var cacheHits = promauto.NewCounterVec(prometheus.CounterOpts{
+// 	Name: "bsky_cache_hits_total",
+// 	Help: "The total number of cache hits",
+// }, []string{"cache_type"})
 
-var cacheMisses = promauto.NewCounterVec(prometheus.CounterOpts{
-	Name: "bsky_cache_misses_total",
-	Help: "The total number of cache misses",
-}, []string{"cache_type"})
+// var cacheMisses = promauto.NewCounterVec(prometheus.CounterOpts{
+// 	Name: "bsky_cache_misses_total",
+// 	Help: "The total number of cache misses",
+// }, []string{"cache_type"})
 
-var cacheSize = promauto.NewGaugeVec(prometheus.GaugeOpts{
-	Name: "bsky_cache_size_bytes",
-	Help: "The size of the cache in bytes",
-}, []string{"cache_type"})
+// var cacheSize = promauto.NewGaugeVec(prometheus.GaugeOpts{
+// 	Name: "bsky_cache_size_bytes",
+// 	Help: "The size of the cache in bytes",
+// }, []string{"cache_type"})
 
 type FeedAuthEntity struct {
 	FeedAlias string `json:"feed_alias"`
@@ -152,12 +150,12 @@ func (auth *Auth) GetClaimsFromAuthHeader(ctx context.Context, authHeader string
 			userDID := claims.Issuer
 			entry, ok := auth.KeyCache.Get(userDID)
 			if ok && entry.ExpiresAt.After(time.Now()) {
-				cacheHits.WithLabelValues("key").Inc()
+				// cacheHits.WithLabelValues("key").Inc()
 				span.SetAttributes(attribute.Bool("caches.keys.hit", true))
 				return entry.Key, nil
 			}
 
-			cacheMisses.WithLabelValues("key").Inc()
+			// cacheMisses.WithLabelValues("key").Inc()
 			span.SetAttributes(attribute.Bool("caches.keys.hit", false))
 
 			// Get the user's key from PLC Directory
