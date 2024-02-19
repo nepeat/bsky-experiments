@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@atproto/api": "^0.9.7",
+    "dotenv": "^16.4.4"
+  }
+}
