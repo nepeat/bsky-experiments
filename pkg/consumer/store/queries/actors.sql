@@ -33,6 +33,10 @@ WHERE actors.did = EXCLUDED.did;
 SELECT *
 FROM actors
 WHERE did = $1;
+-- name: GetActorByDIDs :many
+SELECT *
+FROM actors
+WHERE did = ANY($1::text[]);
 -- name: GetActorByHandle :one
 SELECT *
 FROM actors
